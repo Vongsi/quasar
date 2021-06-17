@@ -7,8 +7,8 @@ The QSelect component has two types of selection: single or multiple. This compo
 
 In case you are looking for a dropdown "button" instead of "input" use [Button Dropdown](/vue-components/button-dropdown) instead.
 
-## Installation
-<doc-installation components="QSelect"/>
+## QSelect API
+<doc-api file="QSelect" />
 
 ## Design
 
@@ -105,6 +105,10 @@ If you use functions for custom props always check if the option is null. These 
 <doc-example title="Custom label, value and disable props" file="QSelect/OptionCustomProps" />
 
 ### Customizing menu options
+
+::: warning
+The list of options is rendered using virtual scroll, so if you render more than one element for an option you must set a `q-virtual-scroll--with-prev` class on all elements except the first one.
+:::
 
 <doc-example title="Options slot" file="QSelect/OptionSlot" />
 
@@ -254,16 +258,15 @@ When QSelect is focused:
 
 When the list of options is opened:
   - pressing <kbd>ARROW UP</kbd> or <kbd>ARROW DOWN</kbd> will navigate up or down in the list of options
+  - pressing <kbd>PAGE UP</kbd> or <kbd>PAGE DOWN</kbd> will navigate one page up or down in the list of options
+  - pressing <kbd>HOME</kbd> or <kbd>END</kbd> will navigate to the start or end of the list of options (only if you are not using `use-input`, or the input is empty)
   - when navigating using arrow keys, navigation will wrap when reaching the start or end of the list
   - pressing <kbd>ENTER</kbd> (or <kbd>SPACE</kbd> when `use-input` is not set, or <kbd>TAB</kbd> when `multiple` is not set) when an option is selected in the list will:
     - select the option and close the list of options if `multiple` is not set
     - toggle the option if `multiple` is set
 
-## Native form submit <q-badge align="top" label="v1.9+" />
+## Native form submit <q-badge align="top" color="brand-primary" label="v1.9+" />
 
 When dealing with a native form which has an `action` and a `method` (eg. when using Quasar with ASP.NET controllers), you need to specify the `name` property on QSelect, otherwise formData will not contain it (if it should) - all value are converted to string (native behaviour, so do not use Object values):
 
 <doc-example title="Native form" file="QSelect/NativeForm" />
-
-## QSelect API
-<doc-api file="QSelect" />

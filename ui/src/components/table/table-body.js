@@ -28,8 +28,8 @@ export default {
           return slot !== void 0
             ? slot(this.__getBodyCellScope({ key, row, pageIndex, col }))
             : h('td', {
-              class: col.__tdClass,
-              style: col.style
+              class: col.__tdClass(row),
+              style: col.__tdStyle(row)
             }, this.getCellValue(col, row))
         })
 
@@ -71,6 +71,13 @@ export default {
         data.class['cursor-pointer'] = true
         data.on.dblclick = evt => {
           this.$emit('row-dblclick', evt, row, pageIndex)
+        }
+      }
+
+      if (this.qListeners['row-contextmenu'] !== void 0) {
+        data.class['cursor-pointer'] = true
+        data.on.contextmenu = evt => {
+          this.$emit('row-contextmenu', evt, row, pageIndex)
         }
       }
 

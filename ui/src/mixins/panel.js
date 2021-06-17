@@ -6,20 +6,20 @@ import ListenersMixin from './listeners.js'
 
 import { stop } from '../utils/event.js'
 import { slot } from '../utils/slot.js'
-import cache from '../utils/cache.js'
+import cache, { cacheWithFn } from '../utils/cache.js'
+
+function getPanelWrapper (h) {
+  return h('div', {
+    staticClass: 'q-panel scroll',
+    attrs: { role: 'tabpanel' },
+    // stop propagation of content emitted @input
+    // which would tamper with Panel's model
+    on: cache(this, 'stop', { input: stop })
+  }, slot(this, 'default'))
+}
 
 const PanelWrapper = Vue.extend({
-  name: 'QTabPanelWrapper',
-
-  render (h) {
-    return h('div', {
-      staticClass: 'q-panel scroll',
-      attrs: { role: 'tabpanel' },
-      // stop propagation of content emitted @input
-      // which would tamper with Panel's model
-      on: cache(this, 'stop', { input: stop })
-    }, slot(this, 'default'))
-  }
+  render: getPanelWrapper
 })
 
 export const PanelParentMixin = {
@@ -42,7 +42,10 @@ export const PanelParentMixin = {
     transitionPrev: String,
     transitionNext: String,
 
-    keepAlive: Boolean
+    keepAlive: Boolean,
+    keepAliveInclude: [ String, Array, RegExp ],
+    keepAliveExclude: [ String, Array, RegExp ],
+    keepAliveMax: Number
   },
 
   data () {
@@ -79,6 +82,19 @@ export const PanelParentMixin = {
 
     transitionNextComputed () {
       return this.transitionNext || `slide-${this.vertical === true ? 'up' : 'left'}`
+    },
+
+    keepAliveProps () {
+      return {
+        include: this.keepAliveInclude,
+        exclude: this.keepAliveExclude,
+        max: this.keepAliveMax
+      }
+    },
+
+    needsUniqueWrapper () {
+      return this.keepAliveInclude !== void 0 ||
+        this.keepAliveExclude !== void 0
     }
   },
 
@@ -202,10 +218,17 @@ export const PanelParentMixin = {
 
       const content = this.keepAlive === true
         ? [
-          h('keep-alive', [
-            h(PanelWrapper, {
-              key: this.contentKey
-            }, [ panel ])
+          h('keep-alive', { props: this.keepAliveProps }, [
+            h(
+              this.needsUniqueWrapper === true
+                ? cacheWithFn(this, this.contentKey, () => Vue.extend({
+                  name: this.contentKey,
+                  render: getPanelWrapper
+                }))
+                : PanelWrapper,
+              { key: this.contentKey },
+              [ panel ]
+            )
           ])
         ]
         : [

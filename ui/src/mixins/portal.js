@@ -2,6 +2,7 @@ import Vue from 'vue'
 
 import { isSSR } from '../plugins/Platform.js'
 import { getBodyFullscreenElement } from '../utils/dom.js'
+import { addFocusWaitFlag, removeFocusWaitFlag } from '../utils/focus-manager.js'
 
 export function closePortalMenus (vm, evt) {
   do {
@@ -26,7 +27,12 @@ export function closePortalMenus (vm, evt) {
       }
     }
     vm = vm.$parent
-  } while (vm !== void 0)
+  } while (
+    vm !== void 0 && (
+      vm.$el.contains === void 0 || // IE polyfill does not work on comments
+      vm.$el.contains(evt.target) !== true
+    )
+  )
 }
 
 export function closePortals (vm, evt, depth) {
@@ -69,7 +75,18 @@ const Portal = {
   },
 
   methods: {
-    __showPortal () {
+    __showPortal (isReady) {
+      if (isReady === true) {
+        removeFocusWaitFlag(this.focusObj)
+        return
+      }
+
+      if (this.focusObj === void 0) {
+        this.focusObj = {}
+      }
+
+      addFocusWaitFlag(this.focusObj)
+
       if (this.$q.fullscreen !== void 0 && this.$q.fullscreen.isCapable === true) {
         const append = isFullscreen => {
           if (this.__portal === void 0) {
@@ -103,6 +120,8 @@ const Portal = {
     },
 
     __hidePortal () {
+      removeFocusWaitFlag(this.focusObj)
+
       if (this.__portal !== void 0) {
         if (this.unwatchFullscreen !== void 0) {
           this.unwatchFullscreen()

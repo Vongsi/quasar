@@ -5,7 +5,7 @@ q-splitter.release__splitter(:value="20" :limits="[14, 90]")
       q-input(v-model="search" dense square standout color="white" placeholder="Search..." input-class="text-center" clearable)
         template(#append)
           q-icon(:name="mdiMagnify")
-      q-tabs.text-grey-7(vertical v-model="selectedVersion"  active-color="primary" active-bg-color="blue-1" indicator-color="primary")
+      q-tabs.text-grey-7(vertical v-model="selectedVersion"  active-color="brand-primary" active-bg-color="blue-1" indicator-color="brand-primary")
         q-tab(v-for="releaseInfo in filteredReleases" :key="releaseInfo.label" :name="releaseInfo.label")
           .q-tab__label {{ releaseInfo.version }}
           small.text-grey-7 {{ releaseInfo.date }}
@@ -76,16 +76,18 @@ export default {
       content = content
         .replace(/### ([\S ]+)/g, '<div class="text-h6">$1</div>')
         .replace(/## ([\S ]+)/g, '<div class="text-h5">$1</div>')
-        .replace(/# ([\S ]+)g/, '<div class="text-h4">$1</div>')
+        .replace(/# ([\S ]+)/g, '<div class="text-h4">$1</div>')
         .replace(/\*\*([\S ]*?)\*\*/g, '<strong>$1</strong>')
         .replace(/\*([\S ]*?)\*/g, '<em>$1</em>')
         .replace(/```([\S]+)/g, '<code class="doc-code__inner doc-code__inner--prerendered release__code">')
         .replace(/```\n/g, '</code>')
-        .replace(/`([\w ]+)`/g, '<code class="doc-token">$1</code>')
+        .replace(/`(.*?)`/g, '<code class="doc-token">$1</code>')
         .replace(/#([\d]+)/g, '<a class="doc-link" href="https://github.com/quasarframework/quasar/issues/$1" target="_blank">#$1</a>')
-        .replace(/^&gt; ([\S ]+)\n/g, '<div class="release__blockquote">$1</div>')
+        .replace(/^&gt; ([\S ]+)$/gm, '<div class="release__blockquote">$1</div>')
         .replace(/\[([\S ]*?)\]\((\S*?)\)/g, '<a class="doc-link" href="$2" target="_blank">$1</a>')
-        .replace(/\* ([\S .]+)\n/g, '<li>$1</li>')
+        .replace(/^ {2}[-*] ([\S .]+)$/gm, '<li class="q-pl-md">$1</li>')
+        .replace(/^[-*] ([\S .]+)$/gm, '<li>$1</li>')
+        .replace(/<\/li>[\s\n\r]*<li/g, '</li><li')
 
       return content.indexOf('| -') > -1
         ? parseMdTable(content)
@@ -103,8 +105,8 @@ export default {
   .q-markup-table
     white-space: normal
 .release__blockquote
-  background: rgba($primary, .05)
-  border: 1px solid $primary
+  background: rgba($brand-primary, .05)
+  border: 1px solid $brand-primary
   padding: 4px 8px
   border-radius: $generic-border-radius
 .release__code

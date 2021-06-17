@@ -12,6 +12,7 @@ import AttrsMixin from '../../mixins/attrs.js'
 import { slot } from '../../utils/slot.js'
 import uid from '../../utils/uid.js'
 import { stop, prevent, stopAndPrevent } from '../../utils/event.js'
+import { addFocusFn, removeFocusFn } from '../../utils/focus-manager.js'
 
 function getTargetUid (val) {
   return val === void 0 ? `f_${uid()}` : val
@@ -147,7 +148,8 @@ export default Vue.extend({
         'q-field--rounded': this.rounded,
         'q-field--square': this.square,
 
-        'q-field--focused': this.focused === true || this.hasError === true,
+        'q-field--focused': this.focused === true,
+        'q-field--highlighted': this.focused === true || this.hasError === true,
         'q-field--float': this.floatingLabel,
         'q-field--labeled': this.hasLabel,
 
@@ -161,7 +163,7 @@ export default Vue.extend({
         'q-field--error': this.hasError,
 
         'q-field--readonly': this.readonly === true && this.disable !== true,
-        'q-field--disabled': this.disable
+        [this.disable === true ? 'q-field--disabled' : 'q-validation-component']: true
       }
     },
 
@@ -236,15 +238,19 @@ export default Vue.extend({
 
   methods: {
     focus () {
-      if (this.showPopup !== void 0 && this.hasDialog === true) {
-        this.showPopup()
-        return
-      }
+      this.focusFn !== void 0 && removeFocusFn(this.focusFn)
+      this.focusFn = addFocusFn(() => {
+        if (this.showPopup !== void 0) {
+          this.showPopup()
+          return
+        }
 
-      this.__focus()
+        this.__focus()
+      })
     },
 
     blur () {
+      this.focusFn !== void 0 && removeFocusFn(this.focusFn)
       const el = document.activeElement
       // IE can have null document.activeElement
       if (el !== null && this.$el.contains(el)) {
@@ -490,8 +496,14 @@ export default Vue.extend({
     __clearValue (e) {
       // prevent activating the field but keep focus on desktop
       stopAndPrevent(e)
-      const el = this.$refs.target || this.$el
-      el.focus()
+
+      if (this.$q.platform.is.mobile !== true) {
+        const el = this.$refs.target || this.$el
+        el.focus()
+      }
+      else if (this.$el.contains(document.activeElement) === true) {
+        document.activeElement.blur()
+      }
 
       if (this.type === 'file') {
         // do not let focus be triggered
@@ -502,6 +514,14 @@ export default Vue.extend({
 
       this.$emit('input', null)
       this.$emit('clear', this.value)
+
+      this.$nextTick(() => {
+        this.resetValidation()
+
+        if (this.lazyRules !== 'ondemand' && this.$q.platform.is.mobile !== true) {
+          this.isDirty = false
+        }
+      })
     },
 
     __emitValue (value) {
@@ -514,7 +534,7 @@ export default Vue.extend({
     this.__onPostRender !== void 0 && this.$nextTick(this.__onPostRender)
 
     return h('label', {
-      staticClass: 'q-field q-validation-component row no-wrap items-start',
+      staticClass: 'q-field row no-wrap items-start',
       class: this.classes,
       attrs: this.attrs
     }, [
@@ -524,7 +544,7 @@ export default Vue.extend({
       }, this.$scopedSlots.before()) : null,
 
       h('div', {
-        staticClass: 'q-field__inner relative-position col self-stretch column justify-center'
+        staticClass: 'q-field__inner relative-position col self-stretch'
       }, [
         h('div', {
           ref: 'control',

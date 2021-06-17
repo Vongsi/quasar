@@ -9,10 +9,11 @@ import AttrsMixin from '../../mixins/attrs.js'
 
 import ClickOutside from './ClickOutside.js'
 import { getScrollTarget } from '../../utils/scroll.js'
-import { create, stop, position, stopAndPrevent } from '../../utils/event.js'
+import { create, stop, position, stopAndPreventClick } from '../../utils/event.js'
 import EscapeKey from '../../utils/escape-key.js'
 
 import { slot } from '../../utils/slot.js'
+import { addFocusFn } from '../../utils/focus-manager.js'
 
 import {
   validatePosition, validateOffset, setPosition, parsePosition
@@ -78,22 +79,19 @@ export default Vue.extend({
   },
 
   computed: {
-    horizSide () {
-      return this.$q.lang.rtl === true ? 'right' : 'left'
-    },
-
     anchorOrigin () {
       return parsePosition(
         this.anchor || (
-          this.cover === true ? `center middle` : `bottom ${this.horizSide}`
-        )
+          this.cover === true ? 'center middle' : 'bottom start'
+        ),
+        this.$q.lang.rtl
       )
     },
 
     selfOrigin () {
       return this.cover === true
         ? this.anchorOrigin
-        : parsePosition(this.self || `top ${this.horizSide}`)
+        : parsePosition(this.self || 'top start', this.$q.lang.rtl)
     },
 
     menuClass () {
@@ -132,14 +130,16 @@ export default Vue.extend({
 
   methods: {
     focus () {
-      let node = this.__portal !== void 0 && this.__portal.$refs !== void 0
-        ? this.__portal.$refs.inner
-        : void 0
+      addFocusFn(() => {
+        let node = this.__portal !== void 0 && this.__portal.$refs !== void 0
+          ? this.__portal.$refs.inner
+          : void 0
 
-      if (node !== void 0 && node.contains(document.activeElement) !== true) {
-        node = node.querySelector('[autofocus], [data-autofocus]') || node
-        node.focus()
-      }
+        if (node !== void 0 && node.contains(document.activeElement) !== true) {
+          node = node.querySelector('[autofocus], [data-autofocus]') || node
+          node.focus()
+        }
+      })
     },
 
     __show (evt) {
@@ -171,7 +171,7 @@ export default Vue.extend({
 
       if (this.unwatch === void 0) {
         this.unwatch = this.$watch(
-          () => this.$q.screen.width + '|' + this.$q.screen.height + '|' + this.self + '|' + this.anchor,
+          () => this.$q.screen.width + '|' + this.$q.screen.height + '|' + this.self + '|' + this.anchor + '|' + this.$q.lang.rtl,
           this.updatePosition
         )
       }
@@ -198,6 +198,7 @@ export default Vue.extend({
         }
 
         this.updatePosition()
+        this.__showPortal(true)
         this.$emit('show', evt)
       }, 300)
     },
@@ -297,14 +298,14 @@ export default Vue.extend({
       if (this.persistent !== true && this.showing === true) {
         const targetClassList = e.target.classList
 
-        this.hide(e)
+        closePortalMenus(this, e)
         if (
           // always prevent touch event
           e.type === 'touchstart' ||
           // prevent click if it's on a dialog backdrop
           targetClassList.contains('q-dialog__backdrop')
         ) {
-          stopAndPrevent(e)
+          stopAndPreventClick(e)
         }
         return true
       }

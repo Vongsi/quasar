@@ -27,7 +27,7 @@ A boot file is a simple JavaScript file which can optionally export a function. 
 | `ssrContext` | Available only on server-side, if building for SSR |
 | `urlPath` | (**@quasar/app 1.0.7+**) The pathname (path + search) part of the URL. It also contains the hash on client-side. |
 | `publicPath` | (**@quasar/app 2+**) The configured public path. |
-| `redirect` | (**@quasar/app 1.0.7+**) Function to call to redirect to another URL. Accepts String (URL path) or a Vue Router location Object. |
+| `redirect` | (**@quasar/app 1.0.7+**) Function to call to redirect to another URL. Accepts String (URL path) or a Vue Router location Object (and starting with v2.1.9+, also optionally a redirect HTTP Status Code). |
 
 ```js
 export default ({ app, router, store, Vue }) => {
@@ -105,10 +105,10 @@ Boot files fulfill one special purpose: they run code **before** the App's Vue r
 * For plain JavaScript libraries like Lodash, which don't need any initialization prior to their usage. Lodash, for example, might make sense to use as a boot file only if you want to inject Vue prototype with it, like being able to use `this.$_` inside your Vue files.
 
 ## Usage of boot files
-The first step is always to generate a new plugin using Quasar CLI:
+The first step is always to generate a new boot file using Quasar CLI:
 
 ```bash
-$ quasar new boot <name>
+$ quasar new boot <name> [--format ts]
 ```
 
 Where `<name>` should be exchanged by a suitable name for your boot file.
@@ -187,7 +187,7 @@ boot: [
 ]
 ```
 
-### Redirecting to another page <q-badge align="top" label="@quasar/app 1.0.7+" />
+### Redirecting to another page <q-badge align="top" color="brand-primary" label="@quasar/app 1.0.7+" />
 
 ```js
 export default ({ urlPath, redirect }) => {
@@ -195,6 +195,9 @@ export default ({ urlPath, redirect }) => {
   const isAuthorized = // ...
   if (!isAuthorized && !urlPath.startsWith('/login')) {
     redirect({ path: '/login' })
+    // (@quasar/app 2.1.9+)
+    // or with a HTTP Status Code:
+    // redirect({ path: '/login' }, 302)
     return
   }
   // ...
@@ -255,11 +258,15 @@ import Vue from 'vue'
 import axios from 'axios'
 
 // we add it to Vue prototype
-// so we can reference it in Vue files
-// without the need to import axios
+// so we can reference it in Vue files as this.$axios
+// without the need to import axios or use vue-axios
 Vue.prototype.$axios = axios
 
-// Example: this.$axios will reference Axios now so you don't need stuff like vue-axios
+// can also create an axios instance specifically for the backend API
+const api = axios.create({ baseURL: 'https://api.example.com' })
+Vue.prototype.$api = api
+
+export { axios, api }
 ```
 
 ### vue-i18n
@@ -316,23 +323,24 @@ import axios from 'axios'
 // We create our own axios instance and set a custom base URL.
 // Note that if we wouldn't set any config here we do not need
 // a named export, as we could just `import axios from 'axios'`
-const axiosInstance = axios.create({
+const api = axios.create({
   baseURL: 'https://api.example.com'
 })
 
-// for use inside Vue files through this.$axios
-Vue.prototype.$axios = axiosInstance
+// for use inside Vue files through this.$axios and this.$api
+Vue.prototype.$axios = axios
+Vue.prototype.$api   = api
 
 // Here we define a named export
 // that we can later use inside .js files:
-export { axiosInstance }
+export { axios, api }
 ```
 
 In any JavaScript file, you'll be able to import the axios instance like this.
 
 ```js
 // we import one of the named exports from src/boot/axios.js
-import { axiosInstance } from 'boot/axios'
+import { api } from 'boot/axios'
 ```
 
 Further reading on syntax: [ES6 import](https://developer.mozilla.org/en-US/docs/web/javascript/reference/statements/import), [ES6 export](https://developer.mozilla.org/en-US/docs/web/javascript/reference/statements/export).

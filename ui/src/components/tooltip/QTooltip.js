@@ -6,7 +6,6 @@ import PortalMixin from '../../mixins/portal.js'
 import TransitionMixin from '../../mixins/transition.js'
 
 import { getScrollTarget } from '../../utils/scroll.js'
-import { getTouchTarget } from '../../utils/touch.js'
 import { addEvt, cleanEvt } from '../../utils/event.js'
 import { clearSelection } from '../../utils/selection.js'
 import { slot } from '../../utils/slot.js'
@@ -69,11 +68,11 @@ export default Vue.extend({
 
   computed: {
     anchorOrigin () {
-      return parsePosition(this.anchor)
+      return parsePosition(this.anchor, this.$q.lang.rtl)
     },
 
     selfOrigin () {
-      return parsePosition(this.self)
+      return parsePosition(this.self, this.$q.lang.rtl)
     },
 
     hideOnRouteChange () {
@@ -92,7 +91,15 @@ export default Vue.extend({
         this.__configureScrollTarget()
       })
 
+      if (this.unwatch === void 0) {
+        this.unwatch = this.$watch(
+          () => this.$q.screen.width + '|' + this.$q.screen.height + '|' + this.self + '|' + this.anchor + '|' + this.$q.lang.rtl,
+          this.updatePosition
+        )
+      }
+
       this.__setTimeout(() => {
+        this.__showPortal(true)
         this.$emit('show', evt)
       }, 300)
     },
@@ -110,6 +117,11 @@ export default Vue.extend({
       if (this.observer !== void 0) {
         this.observer.disconnect()
         this.observer = void 0
+      }
+
+      if (this.unwatch !== void 0) {
+        this.unwatch()
+        this.unwatch = void 0
       }
 
       this.__unconfigureScrollTarget()
@@ -144,7 +156,7 @@ export default Vue.extend({
         clearSelection()
         document.body.classList.add('non-selectable')
 
-        const target = getTouchTarget(this.anchorEl)
+        const target = this.anchorEl
         const evts = ['touchmove', 'touchcancel', 'touchend', 'click']
           .map(e => ([ target, e, '__delayHide', 'passiveCapture' ]))
 

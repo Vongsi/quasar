@@ -29,37 +29,55 @@
     },
 
     "virtual-scroll-slice-size": {
-      "type": "Number",
-      "desc": "Number of rows to render in the virtual list",
+      "type": [ "Number", "String" ],
+      "desc": "Minimum number of rows to render in the virtual list",
       "default": "30",
-      "examples": [ ":virtual-scroll-slice-size=\"60\"" ],
+      "examples": [ "virtual-scroll-slice-size=\"60\"" ],
       "category": "virtual-scroll",
       "addedIn": "v1.2.0"
     },
 
+    "virtual-scroll-slice-ratio-before": {
+      "type": [ "Number", "String" ],
+      "desc": "Ratio of number of rows in visible zone to render before it",
+      "default": "1",
+      "examples": [ "virtual-scroll-slice-ratio-before=\"0.3\"" ],
+      "category": "virtual-scroll",
+      "addedIn": "v1.14.7"
+    },
+
+    "virtual-scroll-slice-ratio-after": {
+      "type": [ "Number", "String" ],
+      "desc": "Ratio of number of rows in visible zone to render after it",
+      "default": "1",
+      "examples": [ "virtual-scroll-slice-ratio-after=\"2\"" ],
+      "category": "virtual-scroll",
+      "addedIn": "v1.14.7"
+    },
+
     "virtual-scroll-item-size": {
-      "type": "Number",
+      "type": [ "Number", "String" ],
       "desc": "Default size in pixels of a row; This value is used for rendering the initial table; Try to use a value close to the minimum size of a row",
       "default": "48 (24 if dense)",
-      "examples": [ ":virtual-scroll-item-size=\"48\"" ],
+      "examples": [ "virtual-scroll-item-size=\"48\"" ],
       "category": "virtual-scroll",
       "addedIn": "v1.2.0"
     },
 
     "virtual-scroll-sticky-size-start": {
-      "type": "Number",
+      "type": [ "Number", "String" ],
       "desc": "Size in pixels of the sticky header (if using one); A correct value will improve scroll precision",
       "default": "0",
-      "examples": [ ":virtual-scroll-sticky-size-start=\"48\"" ],
+      "examples": [ "virtual-scroll-sticky-size-start=\"48\"" ],
       "category": "virtual-scroll",
       "addedIn": "v1.2.0"
     },
 
     "virtual-scroll-sticky-size-end": {
-      "type": "Number",
+      "type": [ "Number", "String" ],
       "desc": "Size in pixels of the sticky footer part (if using one); A correct value will improve scroll precision",
       "default": "0",
-      "examples": [ ":virtual-scroll-sticky-size-end=\"48\"" ],
+      "examples": [ "virtual-scroll-sticky-size-end=\"48\"" ],
       "category": "virtual-scroll",
       "addedIn": "v1.2.0"
     },
@@ -190,6 +208,13 @@
             "examples": [ "-1", "0", "1" ]
           }
         },
+        "sortOrder": {
+          "type": "String",
+          "desc": "Set column sort order: 'ad' (ascending-descending) or 'da' (descending-ascending); Overrides the 'column-sort-order' prop",
+          "values": [ "ad", "da" ],
+          "default": "ad",
+          "addedIn": "v1.15.11"
+        },
         "format": {
           "type": "Function",
           "desc": "Function you can apply to format your data",
@@ -213,14 +238,20 @@
           }
         },
         "style": {
-          "type": "String",
-          "desc": "Style to apply on normal cells of the column",
-          "examples": [ "width: 500px" ]
+          "type": [ "String", "Function" ],
+          "desc": "Style to apply on normal cells of the column; The Function form requires v1.15.15+",
+          "examples": [
+            "width: 500px",
+            "row => (row.calories % 2 === 0 ? 'width:10px' : 'font-size:2em')"
+          ]
         },
         "classes": {
-          "type": "String",
-          "desc": "Classes to add on normal cells of the column",
-          "examples": [ "my-special-class" ]
+          "type": [ "String", "Function" ],
+          "desc": "Classes to add on normal cells of the column; The Function form requires v1.15.15+",
+          "examples": [
+            "my-special-class",
+            "row => (row.calories % 2 === 0 ? 'bg-green' : 'bg-yellow')"
+          ]
         },
         "headerStyle": {
           "type": "String",
@@ -328,6 +359,15 @@
       "type": "Boolean",
       "desc": "Skip the third state (unsorted) when user toggles column sort direction",
       "category": "sorting"
+    },
+
+    "column-sort-order": {
+      "type": "String",
+      "desc": "Set column sort order: 'ad' (ascending-descending) or 'da' (descending-ascending); It gets applied to all columns unless a column has its own sortOrder specified in the 'columns' definition prop",
+      "values": [ "ad", "da" ],
+      "default": "ad",
+      "category": "sorting",
+      "addedIn": "v1.15.11"
     },
 
     "no-data-label": {
@@ -1879,6 +1919,31 @@
       "addedIn": "v1.5.10"
     },
 
+    "row-contextmenu": {
+      "desc": "Emitted when user right clicks/long taps on a row; Is not emitted when using body/row/item scoped slots",
+      "params": {
+        "evt": {
+          "type": "Object",
+          "desc": "JS event object",
+          "required": true,
+          "__exemption": [ "examples" ]
+        },
+
+        "row": {
+          "type": "Object",
+          "desc": "The row upon which user has right clicked/long tapped",
+          "__exemption": [ "examples" ]
+        },
+
+        "index": {
+          "type": "Number",
+          "desc": "Index of the row in the current page",
+          "__exemption": [ "examples" ]
+        }
+      },
+      "addedIn": "v1.15.1"
+    },
+
     "request": {
       "desc": "Emitted when a server request is triggered",
       "params": {
@@ -2330,6 +2395,12 @@
           "desc": "The index of the row in page (0 based)",
           "required": true,
           "examples": [ "1", 23 ]
+        },
+        "edge": {
+          "type": "String",
+          "desc": "Only for virtual scroll - the edge to align to if the row is not visible already (by default it aligns to end if scrolling towards the end and to start otherwise); If the '-force' version is used then it always aligns",
+          "values": [ "start", "center", "end", "start-force", "center-force", "end-force" ],
+          "addedIn": "v1.14.7"
         }
       },
       "addedIn": "v1.7.2"

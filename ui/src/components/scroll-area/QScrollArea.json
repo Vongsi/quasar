@@ -40,7 +40,7 @@
 
     "visible": {
       "type": "Boolean",
-      "desc": "(Desktop only) Manually control the visibility of the scrollbar; Overrides default mouse over/leave behavior",
+      "desc": "Manually control the visibility of the scrollbar; Overrides default mouse over/leave behavior",
       "category": "behavior",
       "addedIn": "v1.3.0"
     },
@@ -57,6 +57,11 @@
       "type": "Boolean",
       "desc": "Register for horizontal scroll instead of vertical (which is default)",
       "category": "behavior"
+    },
+
+    "tabindex": {
+      "extends": "tabindex",
+      "addedIn": "v1.15.15"
     }
   },
 
