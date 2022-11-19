@@ -229,7 +229,7 @@
       </q-card>
 
       <q-card class="bigger">
-        <q-img :src="require('assets/donuts.png')" />
+        <q-img src="~assets/donuts.png" />
 
         <q-card-section>
           <q-btn
@@ -557,7 +557,7 @@
 
       <q-card>
         <q-img
-          :src="require('assets/parallax2.jpg')"
+          src="~assets/parallax2.jpg"
           basic
         >
           <div class="absolute-bottom text-subtitle2 text-center">
@@ -1101,13 +1101,13 @@ export default {
 }
 </script>
 
-<style lang="stylus">
+<style lang="sass">
 .card-examples
   .q-card
-    width 300px
+    width: 300px
   .bigger
-    width 450px
+    width: 450px
   @media (max-width $breakpoint-xs-max)
     .q-card
-      width 100%
+      width: 100%
 </style>

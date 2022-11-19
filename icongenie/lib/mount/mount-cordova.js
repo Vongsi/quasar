@@ -1,7 +1,7 @@
 const { readFileSync, writeFileSync, existsSync } = require('fs')
 const elementTree = require('elementtree')
 const { relative } = require('path')
-const { red, green } = require('chalk')
+const { red, green } = require('kolorist')
 
 const { resolveDir } = require('../utils/app-paths')
 const { log, warn } = require('../utils/logger')
@@ -52,7 +52,14 @@ function updateConfigXml (cordovaFiles, hasSplashscreen) {
   }
 
   const androidNode = getNode(rootNode, 'platform', '[@name="android"]')
+  if (androidNode.get('name') === void 0) {
+    androidNode.set('name', 'android')
+  }
+
   const iosNode = getNode(rootNode, 'platform', '[@name="ios"]')
+  if (iosNode.get('name') === void 0) {
+    iosNode.set('name', 'ios')
+  }
 
   cordovaFiles.forEach(file => {
     const isAndroid = file.platform === 'cordova-android'

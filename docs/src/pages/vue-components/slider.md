@@ -1,6 +1,7 @@
 ---
 title: Slider
 desc: The QSlider Vue component is a great way for the user to specify a number value between a minimum and maximum value, with optional steps between valid values.
+keys: QSlider
 related:
   - /vue-components/range
   - /vue-components/field
@@ -9,10 +10,15 @@ The QSlider is a great way for the user to specify a number value between a mini
 
 Also check its “sibling”, the [QRange](/vue-components/range) component.
 
-## Installation
-<doc-installation components="QSlider" />
+## QSlider API
+
+<doc-api file="QSlider" />
 
 ## Usage
+
+::: warning
+You are responsible for accommodating the space around QSlider so that the label and marker labels won't overlap the other content on your page. You can use CSS margin or padding for this purpose.
+:::
 
 ### Standard
 
@@ -21,6 +27,12 @@ Also check its “sibling”, the [QRange](/vue-components/range) component.
 ### Vertical
 
 <doc-example title="Vertical orientation" file="QSlider/Vertical" />
+
+### With inner min/max <q-badge align="top" color="brand-primary" label="v2.4+" />
+
+Sometimes you need to restrict the model value to an interval inside of the track's length. For this purpose, use `inner-min` and `inner-max` props. First prop needs to be higher or equal to `min` prop while the latter needs to be lower or equal to the `max` prop.
+
+<doc-example title="Inner min/max" file="QSlider/InnerMinMax" />
 
 ### With step
 
@@ -50,6 +62,26 @@ The example below is better highlighting how QSlider handles label positioning s
 
 <doc-example title="Markers" file="QSlider/Markers" />
 
+### Marker labels <q-badge align="top" color="brand-primary" label="v2.4+" />
+
+<doc-example title="Marker labels" file="QSlider/MarkerLabels" />
+
+::: tip TIP on slots
+In order to use the marker label slots (see below), you must enable them by using the `marker-labels` prop.
+:::
+
+<doc-example title="Marker label slots" file="QSlider/MarkerLabelSlots" />
+
+### Other customizations <q-badge align="top" color="brand-primary" label="v2.4+" />
+
+<doc-example title="Color customizations" file="QSlider/SliderColoring" />
+
+<doc-example title="Hide selection bar" file="QSlider/NoSelection" />
+
+<doc-example title="Custom track images" file="QSlider/TrackImages" />
+
+<doc-example title="Track & thumb size" file="QSlider/SliderSizes" />
+
 ### Lazy input
 
 <doc-example title="Lazy input" file="QSlider/Lazy" />
@@ -58,7 +90,7 @@ The example below is better highlighting how QSlider handles label positioning s
 
 <doc-example title="Null value" file="QSlider/Null" />
 
-### Reverse <q-badge align="top" label="v1.5+" />
+### Reverse
 
 <doc-example title="In reverse" file="QSlider/Reverse" />
 
@@ -74,11 +106,8 @@ The example below is better highlighting how QSlider handles label positioning s
 
 <doc-example title="With QItem" file="QSlider/List" />
 
-### Native form submit <q-badge align="top" label="v1.9+" />
+### Native form submit
 
 When dealing with a native form which has an `action` and a `method` (eg. when using Quasar with ASP.NET controllers), you need to specify the `name` property on QSlider, otherwise formData will not contain it (if it should):
 
 <doc-example title="Native form" file="QSlider/NativeForm" />
-
-## QSlider API
-<doc-api file="QSlider" />

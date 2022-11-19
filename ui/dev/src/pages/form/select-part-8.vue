@@ -10,7 +10,7 @@
     -->
     <div class="q-pa-md" style="max-width: 350px">
     <q-btn round dense flas icon="settings" color="black" text-color="white">
-      <q-menu content-class="q-menu-class">
+      <q-menu class="q-menu-class">
         <q-list bordered padding>
           <q-item-label header>User Controls</q-item-label>
 
@@ -42,16 +42,13 @@
                    dense options-dense outlined
                    emit-value map-options
                 >
-                  <template v-slot:option="scope">
-                    <q-item
-                            v-bind="scope.itemProps"
-                            v-on="scope.itemEvents"
-                            >
+                  <template v-slot:option="{ itemProps, opt, selected, toggleOption }">
+                    <q-item v-bind="itemProps">
                       <q-item-section>
-                        <q-item-label v-html="scope.opt.label" ></q-item-label>
+                        <q-item-label v-html="opt.label" />
                       </q-item-section>
                       <q-item-section side>
-                        <q-toggle v-model="selectedUserColors" :val="scope.opt.value" />
+                        <q-toggle :model-value="selected" @update:model-value="toggleOption(opt)" />
                       </q-item-section>
                     </q-item>
                   </template>
@@ -66,7 +63,7 @@
             </template>
           </q-select>
 
-          <q-separator spaced></q-separator>
+          <q-separator spaced />
           <q-item-label header>General</q-item-label>
 
           <q-item tag="label" v-ripple>
@@ -108,7 +105,7 @@
             </q-item-section>
           </q-item>
 
-          <q-separator spaced></q-separator>
+          <q-separator spaced />
           <q-item-label header>Notifications</q-item-label>
 
           <q-item tag="label" v-ripple>
@@ -171,13 +168,13 @@
           dense options-dense outlined
           emit-value map-options
         >
-          <template v-slot:option="scope">
-            <q-item v-bind="scope.itemProps" v-on="scope.itemEvents">
+          <template v-slot:option="{ itemProps, opt, selected, toggleOption }">
+            <q-item v-bind="itemProps">
               <q-item-section>
-                <q-item-label v-html="scope.opt.label" ></q-item-label>
+                <q-item-label v-html="opt.label" />
               </q-item-section>
               <q-item-section side>
-                <q-toggle v-model="selectedUserColors" :val="scope.opt.value" />
+                <q-toggle :model-value="selected" @update:model-value="toggleOption(opt)" />
               </q-item-section>
             </q-item>
           </template>
@@ -192,13 +189,13 @@
           dense options-dense outlined
           emit-value map-options
         >
-          <template v-slot:option="scope">
-            <q-item v-bind="scope.itemProps" v-on="scope.itemEvents">
+          <template v-slot:option="{ itemProps, opt, selected, toggleOption }">
+            <q-item v-bind="itemProps">
               <q-item-section>
-                <q-item-label v-html="scope.opt.label" ></q-item-label>
+                <q-item-label v-html="opt.label" />
               </q-item-section>
               <q-item-section side>
-                <q-toggle v-model="selectedUserColors" :val="scope.opt.value" />
+                <q-toggle :model-value="selected" @update:model-value="toggleOption(opt)" />
               </q-item-section>
             </q-item>
           </template>
@@ -223,13 +220,13 @@
           emit-value map-options
           behavior="menu"
         >
-          <template v-slot:option="scope">
-            <q-item v-bind="scope.itemProps" v-on="scope.itemEvents">
+          <template v-slot:option="{ itemProps, opt, selected, toggleOption }">
+            <q-item v-bind="itemProps">
               <q-item-section>
-                <q-item-label v-html="scope.opt.label" ></q-item-label>
+                <q-item-label v-html="opt.label" />
               </q-item-section>
               <q-item-section side>
-                <q-toggle v-model="selectedUserColors" :val="scope.opt.value" />
+                <q-toggle :model-value="selected" @update:model-value="toggleOption(opt)" />
               </q-item-section>
             </q-item>
           </template>
@@ -298,6 +295,3 @@ export default {
   }
 }
 </script>
-
-<style lang="sass">
-</style>

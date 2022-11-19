@@ -2,46 +2,56 @@ module.exports = {
   root: true,
 
   parserOptions: {
-    parser: 'babel-eslint'
+    ecmaVersion: '2021', // Allows for the parsing of modern ECMAScript features
   },
 
   env: {
-    browser: true
+    node: true,
+    browser: true,
+    'vue/setup-compiler-macros': true
   },
 
   extends: [
     // https://github.com/vuejs/eslint-plugin-vue#priority-a-essential-error-prevention
     // consider switching to `plugin:vue/strongly-recommended` or `plugin:vue/recommended` for stricter rules.
-    'plugin:vue/essential',
+    'plugin:vue/vue3-essential',
     'standard'
   ],
 
   // required to lint *.vue files
   plugins: [
     'vue',
-    'quasar',
+    'quasar'
   ],
 
   globals: {
-    'ga': true, // Google Analytics
-    'cordova': true,
-    '__statics': true,
-    'Prism': true
+    ga: true, // Google Analytics
+    cordova: true,
+    __statics: true,
+    __QUASAR_SSR__: true,
+    __QUASAR_SSR_SERVER__: true,
+    __QUASAR_SSR_CLIENT__: true,
+    __QUASAR_SSR_PWA__: true,
+    Prism: true
   },
 
   // add your custom rules here
   rules: {
-    // allow async-await
+    'brace-style': [ 2, 'stroustrup', { 'allowSingleLine': true } ],
+    'prefer-const': 2,
+    'prefer-promise-reject-errors': 'off',
+    'multiline-ternary': 'off',
+    'array-bracket-spacing': [ 'error', 'always', { singleValue: false } ],
+    'computed-property-spacing': [ 'error', 'always' ],
+    'no-prototype-builtins': 'off',
+    'no-case-declarations': 'off',
     'generator-star-spacing': 'off',
-    // allow paren-less arrow functions
     'arrow-parens': 'off',
     'one-var': 'off',
-    'prefer-promise-reject-errors': 'off',
-
     'no-void': 'off',
-    'quotes': 'off',
-    'array-bracket-spacing': ['error', 'always'],
-    'brace-style': ['error', 'stroustrup'],
+    'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
+    'no-debugger': process.env.NODE_ENV === 'production' ? 2 : 0,
+    'template-curly-spacing': 'off',
 
     'import/export': 'off',
     'import/first': 'off',
@@ -54,9 +64,8 @@ module.exports = {
 
     'quasar/check-valid-props': 'warn',
 
-    // allow console.log during development only
-    'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
-    // allow debugger during development only
-    'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off'
+    'vue/no-mutating-props': 'off',
+    'vue/no-v-model-argument': 'off',
+    'vue/multi-word-component-names': 'off'
   }
 }

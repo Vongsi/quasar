@@ -1,6 +1,6 @@
 {
   "meta": {
-    "docsUrl": "https://v1.quasar.dev/vue-directives/touch-pan"
+    "docsUrl": "https://v2.quasar.dev/vue-directives/touch-pan"
   },
 
   "value": {
@@ -12,9 +12,8 @@
         "desc": "Event details",
         "definition": {
           "evt": {
-            "type": "Object",
-            "desc": "Original JS event Object",
-            "__exemption": [ "examples" ]
+            "extends": "evt",
+            "desc": "Original JS event Object"
           },
           "touch": {
             "type": "Boolean",
@@ -30,13 +29,11 @@
             "definition": {
               "top": {
                 "type": "Number",
-                "desc": "Vertical offset from top of window",
-                "examples": [ 235 ]
+                "desc": "Vertical offset from top of window"
               },
               "left": {
                 "type": "Number",
-                "desc": "Horizontal offset from left of window",
-                "examples": [ 235 ]
+                "desc": "Horizontal offset from left of window"
               }
             }
           },
@@ -55,8 +52,7 @@
           },
           "duration": {
             "type": "Number",
-            "desc": "How long it took to trigger the event (in milliseconds)",
-            "examples": [ 612 ]
+            "desc": "How long it took to trigger the event (in milliseconds)"
           },
           "distance": {
             "type": "Object",
@@ -64,13 +60,11 @@
             "definition": {
               "x": {
                 "type": "Number",
-                "desc": "Absolute distance horizontally",
-                "examples": [ 231 ]
+                "desc": "Absolute distance horizontally"
               },
               "y": {
                 "type": "Number",
-                "desc": "Absolute distance vertically",
-                "examples": [ 231 ]
+                "desc": "Absolute distance vertically"
               }
             }
           },
@@ -96,13 +90,11 @@
             "definition": {
               "x": {
                 "type": "Number",
-                "desc": "Distance horizontally",
-                "examples": [ 2 ]
+                "desc": "Distance horizontally"
               },
               "y": {
                 "type": "Number",
-                "desc": "Distance vertically",
-                "examples": [ 1 ]
+                "desc": "Distance vertically"
               }
             }
           }
@@ -122,11 +114,6 @@
     "prevent": {
       "type": "Boolean",
       "desc": "Calls event.preventDefault() for touch events"
-    },
-
-    "mightPrevent": {
-      "type": "Boolean",
-      "desc": "Required when you might call event.preventDefault() in your handler for touch events"
     },
 
     "capture": {
@@ -151,8 +138,7 @@
 
     "preserveCursor": {
       "type": "Boolean",
-      "desc": "Prevent the mouse cursor from automatically displaying as grabbing when panning",
-      "addedIn": "v1.13.0"
+      "desc": "Prevent the mouse cursor from automatically displaying as grabbing when panning"
     },
 
     "horizontal": {

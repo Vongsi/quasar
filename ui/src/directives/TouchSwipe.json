@@ -1,6 +1,6 @@
 {
   "meta": {
-    "docsUrl": "https://v1.quasar.dev/vue-directives/touch-swipe"
+    "docsUrl": "https://v2.quasar.dev/vue-directives/touch-swipe"
   },
 
   "value": {
@@ -12,9 +12,8 @@
         "desc": "Event details",
         "definition": {
           "evt": {
-            "type": "Object",
-            "desc": "Original JS event Object",
-            "__exemption": [ "examples" ]
+            "extends": "evt",
+            "desc": "Original JS event Object"
           },
           "touch": {
             "type": "Boolean",
@@ -31,8 +30,7 @@
           },
           "duration": {
             "type": "Number",
-            "desc": "How long it took to trigger the event (in milliseconds)",
-            "examples": [ 612 ]
+            "desc": "How long it took to trigger the event (in milliseconds)"
           },
           "distance": {
             "type": "Object",
@@ -40,13 +38,11 @@
             "definition": {
               "x": {
                 "type": "Number",
-                "desc": "Absolute distance horizontally",
-                "examples": [ 231 ]
+                "desc": "Absolute distance horizontally"
               },
               "y": {
                 "type": "Number",
-                "desc": "Absolute distance vertically",
-                "examples": [ 231 ]
+                "desc": "Absolute distance vertically"
               }
             }
           }
